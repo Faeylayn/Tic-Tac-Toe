@@ -58,8 +58,8 @@ def print_board(board):
 
 def check_space(board, move):
     "Check if a space on the board is free."
-    row = (move - 1) / len(board)
-    space = (move - 1) % len(board[row])
+    row = (move) / len(board)
+    space = (move) % len(board[row])
     return board[row][space] == " "
         
 def make_move(board, move, letter)
@@ -73,20 +73,64 @@ def user_turn(board, letter):
     while (move not in grid) or (check_space(board, int(move)) == False):
         print "Where would you like to move?"
         move = raw_input()
-        
+        move -= 1
+
     return make_move(board, move, letter)
+
+def checker(test, letter):
+    "Checks a list for a sequence of three elements in a row. Assumes the list is at least of length 3."
+    for i in range(len(test) - 2):
+        if (test[i] == letter) and test[i + 1] == letter and test[i + 2] == letter):
+            return true
+             
+def col_flip(board):
+    "Create a list of the board to put the columns of the board into their own lists. Assumes the length of all rows are equal." 
+    test = []
+    for y in range(len(board[1])):
+        test.append(list())
+        for x in range(len(board)):
+            test[y].append(board[x][len(board) - y - 1])
+    return test
+
+def diag(board):
+    "Create a list of lists for all diagnol positions on board with three or more elements."
+    test = []
+    for x in range(len(board)-2):
+        
+        test.append(list())
+        for y in range(len(board[1]) - x):
+            test[x].append(board[x + y][y])
+            
+    for c in range(len(board[1])-2):
+        test.append(list())
+        for d in range(len(board[1])-c):
+            test[len(board)+c-2].append(board[d][d+c])             
+    return test
         
 def win_check(board, letter):
-    "This is not done yet."
-    raise NotImplementedError
-    return ((board[0] == letter and board[1] == letter and board[2] == letter) or
-    (board[3] == letter and board[4] == letter and board[5] == letter) or
-    (board[6] == letter and board[7] == letter and board[8] == letter) or
-    (board[0] == letter and board[3] == letter and board[6] == letter) or
-    (board[1] == letter and board[4] == letter and board[7] == letter) or
-    (board[2] == letter and board[5] == letter and board[8] == letter) or
-    (board[0] == letter and board[4] == letter and board[8] == letter) or
-    (board[2] == letter and board[4] == letter and board[6] == letter))
+    "Check for tic-tac-toe win condition in the board state. Assumes board is a list of lists."
+        
+    for i in range(len(board)):
+        if checker(board[i], letter):
+            return True
+    
+    col_test = col_flip(board)
+
+    for c in range(len(col_test)):
+        if checker(col_test[c], letter):
+            return True
+
+    diag_test = diag(board)
+
+    for d in range(len(diag_test)):
+        if checker(diag_test[d], letter):
+            return True
+    
+    diag_col = diag(col_test)
+
+    for e in range(len(diag_col)):
+        if checker(diag_col[e], letter):
+            return True
     
 def ai_check(board, letter)
     total = len(board) * len(board[1])
@@ -99,13 +143,13 @@ def ai_check(board, letter)
                 return i    
     return False
 
-def ai_behavior(board, letter, turn):
+def ai_behavior(board, letter, turn, ai_num):
     counter = turn    
     
     if check_space(board, ((len(board) ^ 2) / 2))
         return make_move(board, ((len(board) ^ 2) / 2), letter[turn])
     
-    if len(board) == 4:
+    if ai_num == 2:
         ai_2 = ai_check(board, letter[counter])
         if ai_2 != False:
             return make_move(board, ai_2, letter[turn])
@@ -160,10 +204,11 @@ def main():
     while True:
 
         length = board_size()
-        
+        ai_num = 1
         letter = assign_letters()
         if length == 4
             letter.append('Z')
+            ai_num = 2
         print "Player is " + str(letter[0])
         
         board = make_board(length)
@@ -195,7 +240,7 @@ def main():
                     else:
                         turn = 1
             if turn == 1:
-                ai_behavior(board, letter, turn)
+                ai_behavior(board, letter, turn, ai_num)
                 if win_check(board, letter[1]) == True:
                     print_board(board)
                     print 'You Lose! Sorry!'
@@ -211,7 +256,7 @@ def main():
                         turn = 0
 
             if turn == 2:
-                ai_behavior(board, letter, turn)
+                ai_behavior(board, letter, turn, ai_num)
                 if win_check(board, letter[2]) == True:
                     print_board(board)
                     print 'You Lose! Sorry!'
