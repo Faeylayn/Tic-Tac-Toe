@@ -218,7 +218,7 @@ def main():
         grid = make_grid(length)
                
         print_board(grid)
-        turn = first()
+        turn = first(ai_num)
         
         if turn == 0:
             print 'The Player is first'
