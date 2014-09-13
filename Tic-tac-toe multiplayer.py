@@ -1,4 +1,4 @@
-
+import copy
 import random
 
 def board_size():
@@ -8,9 +8,9 @@ def board_size():
         print "Would you like to play a grid of 3 or 4"
         print "Please enter 3 or 4 (a 3x3 Grid will play against 1 Opponent, a 4x4 will play against 2 opponents."
         length = raw_input()
-    return length
+    return int(length)
 
-def assign_letters(length):
+def assign_letters():
     user_letter = ""
     while not (user_letter == "X" or user_letter == "O"): 
         print "Would you like to be X's or O's"
@@ -35,7 +35,7 @@ def make_board(length):
 def make_grid(length):
     "Takes an integer and creates a list that length with a list of that length at each index, numbering each index space."
     grid = []
-    z = 1
+    z = 0
     for x in range(length):        
         grid.append(list())
         for y in range(length):
@@ -62,30 +62,31 @@ def check_space(board, move):
     space = (move) % len(board[row])
     return board[row][space] == " "
         
-def make_move(board, move, letter)
+def make_move(board, move, letter):
+    "Take a location on the board and save the move to the board state."
     row = (move) / len(board)
     space = (move) % len(board[row])
     board[row][space] = letter
     return board
 
-def user_turn(board, letter):
+def user_turn(board, letter, grid):
     move = '40'
-    while (move not in grid) or (check_space(board, int(move)) == False):
+    while (int(move) >= (len(board) * len(board[1]))) or (check_space(board, int(move)) == False):
         print "Where would you like to move?"
         move = raw_input()
-        move -= 1
 
-    return make_move(board, move, letter)
+    return make_move(board, int(move), letter)
 
 def checker(test, letter):
-    "Checks a list for a sequence of three elements in a row. Assumes the list is at least of length 3."
+    "Check a list for a sequence of three elements in a row. Assumes the list is at least of length 3."
     for i in range(len(test) - 2):
-        if (test[i] == letter) and test[i + 1] == letter and test[i + 2] == letter):
-            return true
+        if (test[i] == letter) and (test[i + 1] == letter) and (test[i + 2] == letter):
+            return True
              
 def col_flip(board):
     "Create a list of the board to put the columns of the board into their own lists. Assumes the length of all rows are equal." 
     test = []
+    print board
     for y in range(len(board[1])):
         test.append(list())
         for x in range(len(board)):
@@ -132,13 +133,15 @@ def win_check(board, letter):
         if checker(diag_col[e], letter):
             return True
     
-def ai_check(board, letter)
+def ai_check(board, letter):
     total = len(board) * len(board[1])
 
     for i in range(total):
-        test = list(board)
+        test = copy.deepcopy(board)
         if check_space(test, i) == True:
-            test[i] = letter
+            row = (i) / len(board)
+            space = (i) % len(board[row])
+            test[row][space] = letter
             if win_check(test, letter) == True:
                 return i    
     return False
@@ -146,8 +149,8 @@ def ai_check(board, letter)
 def ai_behavior(board, letter, turn, ai_num):
     counter = turn    
     
-    if check_space(board, ((len(board) ^ 2) / 2))
-        return make_move(board, ((len(board) ^ 2) / 2), letter[turn])
+    if check_space(board, (len(board) + (len(board) / 2))):
+        return make_move(board, (len(board) + (len(board) / 2)), letter[turn])
     
     if ai_num == 2:
         ai_2 = ai_check(board, letter[counter])
@@ -160,8 +163,8 @@ def ai_behavior(board, letter, turn, ai_num):
         return make_move(board, ai_1, letter[turn])
     if counter == 0:
         counter == 1
-    else 
-        counter == 0:
+    else:
+        counter == 0
 
     ai_p =  ai_check(board, letter[counter])
     if ai_p != False:
@@ -170,8 +173,8 @@ def ai_behavior(board, letter, turn, ai_num):
     
     while True:
         r = (random.random() * 2) - 1
-        rand = ((len(board) ^ 2) / 2) + ((len(board) * r)
-        if check_space(board, int(rand)) == True:
+        rand = ((len(board) ^ 2) / 2) + ((len(board) * r))
+        if check_space(board, int(rand)):
             return make_move(board, int(rand), letter[turn])
     
 def board_full(board):
@@ -183,8 +186,8 @@ def board_full(board):
         
     return True
         
-def first():
-    return random.randint(0,1)
+def first(ai_num):
+    return random.randint(0, ai_num)
         
 def another():
     answer = ''
@@ -206,7 +209,7 @@ def main():
         length = board_size()
         ai_num = 1
         letter = assign_letters()
-        if length == 4
+        if length == 4:
             letter.append('Z')
             ai_num = 2
         print "Player is " + str(letter[0])
@@ -227,7 +230,7 @@ def main():
         while game_on:
             if turn == 0:
                 print_board(board)
-                user_turn(board, letter)
+                board = user_turn(board, letter[0], grid)
                 if win_check(board, letter[0]) == True:
                     print_board(board)
                     print 'You win! Congrats!'
@@ -240,17 +243,20 @@ def main():
                     else:
                         turn = 1
             if turn == 1:
-                ai_behavior(board, letter, turn, ai_num)
+                #import pdb; pdb.set_trace()
+                board = ai_behavior(board, letter, turn, ai_num)
+
                 if win_check(board, letter[1]) == True:
                     print_board(board)
                     print 'You Lose! Sorry!'
                     game_on = False
                 else:
+
                     if board_full(board) == True:
                         print_board(board)
                         print 'The Game is a tie!'
                         game_on = False
-                    elif length == 4:
+                    elif ai_num == 2:
                         turn += 1
                     else:
                         turn = 0
