@@ -11,6 +11,7 @@ def board_size():
     return int(length)
 
 def assign_letters():
+    "Get the User letter from Player and assigns Computer(s) letters accordingly"
     user_letter = ""
     while not (user_letter == "X" or user_letter == "O"): 
         print "Would you like to be X's or O's"
@@ -70,6 +71,7 @@ def make_move(board, move, letter):
     return board
 
 def user_turn(board, letter, grid):
+    "Get the player's move from the player and make's sure the space is open."
     move = '40'
     while (int(move) >= (len(board) * len(board[1]))) or (check_space(board, int(move)) == False):
         print "Where would you like to move?"
@@ -133,6 +135,7 @@ def win_check(board, letter):
             return True
     
 def ai_check(board, letter):
+    "Creates a copy of the board state and replaces each position to check if it causes a win."
     total = len(board) * len(board[1])
 
     for i in range(total):
@@ -146,6 +149,7 @@ def ai_check(board, letter):
     return False
 
 def ai_behavior(board, letter, turn, ai_num):
+    "Gives the AI a priority list for making its moves."
     counter = turn    
     #import pdb; pdb.set_trace()
     if check_space(board, (len(board) + (len(board) / 2))):
@@ -186,9 +190,11 @@ def board_full(board):
     return True
         
 def first(ai_num):
+    "Give a random integer depending on number of players to determine the first player."
     return random.randint(0, ai_num)
         
 def another():
+    "Ask the player if they would like to play another game."
     answer = ''
     while not (answer == 'Y' or answer == 'N'):
         print 'Would you like to play another game? (Y/N)'
