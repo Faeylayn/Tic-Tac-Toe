@@ -21,7 +21,7 @@ def assign_letters():
     if user_letter == "O":
         ai_letter = "X"
         
-    return (user_letter, ai_letter)
+    return [user_letter, ai_letter]
         
 def make_board(length):
     "Takes an integer and creates a list that length with a list of that length at each index."
@@ -86,7 +86,6 @@ def checker(test, letter):
 def col_flip(board):
     "Create a list of the board to put the columns of the board into their own lists. Assumes the length of all rows are equal." 
     test = []
-    print board
     for y in range(len(board[1])):
         test.append(list())
         for x in range(len(board)):
@@ -148,7 +147,7 @@ def ai_check(board, letter):
 
 def ai_behavior(board, letter, turn, ai_num):
     counter = turn    
-    
+    #import pdb; pdb.set_trace()
     if check_space(board, (len(board) + (len(board) / 2))):
         return make_move(board, (len(board) + (len(board) / 2)), letter[turn])
     
@@ -156,15 +155,15 @@ def ai_behavior(board, letter, turn, ai_num):
         ai_2 = ai_check(board, letter[counter])
         if ai_2 != False:
             return make_move(board, ai_2, letter[turn])
-        counter == 0
+        counter = 0
 
     ai_1 = ai_check(board, letter[counter])
     if ai_1 != False:
         return make_move(board, ai_1, letter[turn])
     if counter == 0:
-        counter == 1
+        counter = 1
     else:
-        counter == 0
+        counter = 0
 
     ai_p =  ai_check(board, letter[counter])
     if ai_p != False:
